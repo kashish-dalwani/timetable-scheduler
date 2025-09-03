@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import RoomOccupancyDetector from './Room'; 
+
 
 // Helper function to generate sections
 const generateSections = (year) => {
@@ -18,6 +20,7 @@ const timeSlots = ["09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00"];
 function Dashboard({ userName = "Kashish" }) {
   const [activeYearIdx, setActiveYearIdx] = useState(0);
   const [activeSection, setActiveSection] = useState(curriculumYears[0].sections[0]);
+  const [showRoomDetector, setShowRoomDetector] = useState(false);
 
   // Reset active section when year changes
   useEffect(() => {
@@ -234,8 +237,34 @@ function Dashboard({ userName = "Kashish" }) {
         </div>
       </header>
 
-      {/* Main Content */}
       <main style={{ padding: '38px 42px' }}>
+
+        {/* Button to toggle room availability */}
+        <div style={{ marginBottom: '25px' }}>
+          <button
+            onClick={() => setShowRoomDetector(!showRoomDetector)}
+            style={{
+              backgroundColor: '#3f51b5',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 22px',
+              fontWeight: '600',
+              fontSize: '16px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 8px rgba(63, 81, 181, 0.3)',
+              transition: 'background-color 0.3s',
+            }}
+            onMouseOver={e => e.currentTarget.style.backgroundColor = '#303f9f'}
+            onMouseOut={e => e.currentTarget.style.backgroundColor = '#3f51b5'}
+          >
+            {showRoomDetector ? 'Hide Room Availability' : 'Check Room Availability'}
+          </button>
+        </div>
+
+        {/* Conditionally show RoomOccupancyDetector */}
+        {showRoomDetector && <RoomOccupancyDetector />}
+
         <h1 style={{
           color: '#29357a', fontWeight: 700, marginBottom: '20px', fontSize: '28px'
         }}>
@@ -330,13 +359,14 @@ function Dashboard({ userName = "Kashish" }) {
                       const yearLabel = curriculumYears[activeYearIdx].label;
                       const idx = entries.findIndex(
                         e => e.day === day &&
-                             e.timeSlot === slot &&
-                             e.year === yearLabel &&
-                             e.section === activeSection
+                          e.timeSlot === slot &&
+                          e.year === yearLabel &&
+                          e.section === activeSection
                       );
                       if (idx === -1) return null;
                       return { idx, entry: entries[idx] };
                     })();
+
 
                     return (
                       <td key={day + slot} style={{
@@ -421,7 +451,7 @@ function Dashboard({ userName = "Kashish" }) {
 
         {renderForm()}
       </main>
-    </div>
+    </div >
   );
 }
 
